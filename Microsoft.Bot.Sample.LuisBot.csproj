@@ -181,13 +181,16 @@
     <Compile Include="Dialogs\BasicLuisDialog.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Dialogs\Action\RegisterDialog.cs" />
+    <Compile Include="Dialogs\Common\AskMonthDialog.cs" />
     <Compile Include="Dialogs\Common\AskDayOffTypeDialog.cs" />
-    <Compile Include="Dialogs\Common\AskDateDialog.cs" />
+    <Compile Include="Dialogs\Common\AskDayDialog.cs" />
     <Compile Include="Dialogs\RootLuisDialog.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\DateService.cs" />
+    <Compile Include="Service\LuisResultService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

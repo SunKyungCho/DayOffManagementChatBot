@@ -64,7 +64,7 @@ namespace BookingBot.Dialogs
             var message = await result;
             if (message == null)
             {
-                await context.PostAsync("혹시 다른 문의 사항이 있으시면 입력해주세요~");
+                await context.PostAsync("잘다녀와~");
                 context.Done<object>(null);
             }
             else

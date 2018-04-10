@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BookingBot.Dialogs.SubDialogs;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Luis;
 using Microsoft.Bot.Builder.Luis.Models;
@@ -26,22 +27,25 @@ namespace LuisBot.Dialogs
             _service = service;
         }
 
-        public Task StartAsync(IDialogContext context)
+        public async Task StartAsync(IDialogContext context)
         {
-            context.Wait(MessageReceivedAsync);
-            return Task.CompletedTask;
+            //await this.MessageReceivedAsync(context, null);
+            context.Wait(this.MessageReceivedAsync);
         }
 
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> item)
         {
 
             var message = await item;
-            if (HasDayoffDate(context, _result))
+            if (!HasDayoffDate(context, _result))
             {
-                await context.Forward(new RegisterDialog(_result, _service), this.ResumeAfterDialog, new Activity { Text = _result.Query }, CancellationToken.None);
+                await context.Forward(new AskDayDialog(_result, _service), ResumeAfterDialog, null, CancellationToken.None);
             }
-
-
+            if (day != null)
+            {
+                await context.PostAsync(month + " " + day + " 휴가 등록해줄게.");
+                context.Done<Object>(null);
+            }
         }
 
         public bool HasDayoffDate(IDialogContext context, LuisResult result)
@@ -55,7 +59,16 @@ namespace LuisBot.Dialogs
                     //일단 단일 휴가 등록만 처리
                     //TODO: 여러 휴가 등록처리.
                     day = entity.Entity;
+                    context.ConversationData.SetValue("day", day);
                     hasDayoffDate = true;
+
+                }
+                if (result.TryFindEntity("Month", out entity))
+                {
+                    //일단 단일 휴가 등록만 처리
+                    //TODO: 여러 휴가 등록처리.
+                    month = entity.Entity;
+                    context.ConversationData.SetValue("month", month);
                 }
             }
             else
@@ -67,7 +80,7 @@ namespace LuisBot.Dialogs
 
         public bool HasDayoffType(IDialogContext context, LuisResult result)
         {
-            
+
             return false;
         }
 
@@ -79,6 +92,24 @@ namespace LuisBot.Dialogs
                 //Intent가 변경된 경우. 이쪽으로 들어와서 처리하면 된다.
                 await context.PostAsync("대화 종료.");
                 context.Done<object>(null);
+            }
+        }
+
+
+        [Serializable]
+        internal class LuisActionMissingEntitiesDialog : IDialog<object>
+        {
+            private readonly ILuisService luisService;
+
+            private string intentName;
+
+
+            public LuisActionMissingEntitiesDialog(ILuisService luisService, string executionContextChain)
+            {
+            }
+            public virtual async Task StartAsync(IDialogContext context)
+            {
+
             }
         }
     }

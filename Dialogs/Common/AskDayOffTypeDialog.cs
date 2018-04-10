@@ -1,17 +1,23 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Bot.Builder.Dialogs;
+﻿using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Luis;
 using Microsoft.Bot.Builder.Luis.Models;
 using Microsoft.Bot.Connector;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web;
 
-namespace LuisBot.Dialogs
+namespace BookingBot.Dialogs.SubDialogs
 {
     [Serializable]
-    public class AskDayOffTypeDialog : IDialog<object>
+    public class AskDayOffTypeDialog : IDialog
     {
-        private ILuisService _service { get; set; }
+
+        private ILuisService _service;
+        private string _reservationNo;
+
         [NonSerialized]
         LuisResult _result = null;
 
@@ -22,16 +28,19 @@ namespace LuisBot.Dialogs
             _service = service;
         }
 
-        public Task StartAsync(IDialogContext context)
+        public async Task StartAsync(IDialogContext context)
         {
+            //await this.MessageReceivedAsync(context, null);
             context.Wait(this.MessageReceivedAsync);
         }
 
-        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> item)
+        public virtual async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> item)
         {
+
             var message = await item;
             if (message != null)
             {
+                //var message = await item;
                 var paramValue = message.Text;
                 var result = await _service.QueryAsync(paramValue.ToString(), context.CancellationToken);
                 var queryIntent = result.Intents.FirstOrDefault();
@@ -42,7 +51,7 @@ namespace LuisBot.Dialogs
                      * Intent가 None값이라면.. 질의에 대한 대답으로 판단.
                      * 새로운 Intent라면 시나리오 변경.
                      */
-                    PromptDialog.Confirm(context, this.ChangeIntentConfirm, "응? 휴가 안갈거야?");
+                    PromptDialog.Confirm(context, this.ChangeIntentConfirm, "응? 휴가 안가실건가요?");
                 }
                 else
                 {
@@ -58,23 +67,17 @@ namespace LuisBot.Dialogs
                     }
                     else //유효한 날짜가 입력되었다.
                     {
+                        //날짜를 넘겨주면 되겠다. 예약번호가 180402라고 치고
                         context.Done<Object>(null);
                     }
                 }
             }
             else
             {
-                await context.PostAsync("언제 휴가를 사용하시 겠어요?");
+                await context.PostAsync("언제 휴가 가실건가요?");
                 context.Wait(this.MessageReceivedAsync);
             }
         }
-        public bool ValidateDateFormat(string paramValue)
-        {
-            //모두 숫자인경우, 그리고 6자리이정도만 체크한다치고
-            var isAllDigits = paramValue.All(c => Char.IsDigit(c));
-            return isAllDigits && paramValue.Count() == 6;
-        }
-
         private async Task ChangeIntentConfirm(IDialogContext context, IAwaitable<bool> result)
         {
             if (await result == true)
@@ -87,11 +90,15 @@ namespace LuisBot.Dialogs
             }
             else
             {
-                await context.PostAsync("언제 휴가를 떠날지 알려주세요~");
+                await context.PostAsync("언제 휴가 가실예정이신가요?");
                 context.Wait(this.MessageReceivedAsync);
                 //await this.MessageReceivedAsync(context, null);
             }
-
+        }
+        public bool ValidateDateFormat(string paramValue)
+        {
+            //모두 숫자인경우, 그리고 6자리이정도만 체크한다치고
+            return true;
         }
     }
 }

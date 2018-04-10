@@ -12,7 +12,7 @@ using System.Web;
 namespace BookingBot.Dialogs.SubDialogs
 {
     [Serializable]
-    public class AskDayOffDialog : IDialog
+    public class AskMonthDialog : IDialog
     {
 
         private ILuisService _service;
@@ -21,8 +21,8 @@ namespace BookingBot.Dialogs.SubDialogs
         [NonSerialized]
         LuisResult _result = null;
 
-        public AskDayOffDialog() { }
-        public AskDayOffDialog(LuisResult result, ILuisService service)
+        public AskMonthDialog() { }
+        public AskMonthDialog(LuisResult result, ILuisService service)
         {
             _result = result;
             _service = service;
