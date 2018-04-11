@@ -1,34 +1,14 @@
-## Use Azure app service editor
+# 휴가 관리 챗봇
 
-1. make code change in the online editor
-2. open the console window and run
+휴가를 관리 해준다.
+* 등록
+* 조회
+* 취소
 
-```
-build.cmd
-```
+## LUIS 설정
 
-## Use Visual Studio 
-
-### Build and debug
-1. download source code zip and extract source in local folder
-2. open {PROJ_NAME}.sln in Visual Studio
-3. build and run the bot
-4. download and run [botframework-emulator](https://emulator.botframework.com/)
-5. connect the emulator to http://localhost:3987
-
-### Publish back
-
-In Visual Studio, right click on {PROJ_NAME} and select 'Publish'
-
-For first time publish after downloading source code
-1. In the publish profiles tab, click 'Import'
-2. Browse to 'PostDeployScripts' and pick '{SITE_NAME}.publishSettings'
+## 휴가 날짜 검증
 
 
-## Use continuous integration
-
-If you have setup continuous integration, then your bot will automatically deployed when new changes are pushed to the source repository.
-
-
-
-# Day off Management chat bot
+## Challange
+단순한 rul base 형식으로 구현되어 있음. 좀 더 문장을 파악하고 유연한 대처를 위한 연구가 필요.

@@ -64,7 +64,7 @@ namespace BookingBot.Dialogs
             var message = await result;
             if (message == null)
             {
-                await context.PostAsync("잘다녀와~");
+                await context.PostAsync("대화 종료.");
                 context.Done<object>(null);
             }
             else
